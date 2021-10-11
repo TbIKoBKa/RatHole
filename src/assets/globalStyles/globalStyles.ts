@@ -8,6 +8,11 @@ import reset from 'styled-reset';
 export const GlobalStyles = createGlobalStyle`
     ${reset}
 
+    input {
+        color: white !important;
+        padding: 8px 12px !important;
+    }
+    
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {

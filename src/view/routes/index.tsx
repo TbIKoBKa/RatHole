@@ -1,27 +1,27 @@
 // Core
-import React, { FC, Suspense } from 'react';
+import React, { FC, Suspense, useEffect } from 'react';
+import { useTogglersRedux } from '../../bus/client/togglers';
+import { useUser } from '../../bus/user';
 
 // Routes
-// import { Public } from './Public';
+import { Public } from './Public';
 import { Private } from './Private';
-
-// Bus
-// import { useTogglersRedux } from '../../../.init/redux/togglers';
 
 // Elements
 import { Spinner } from '../elements';
 
 export const Routes: FC = () => {
-    // const { togglersRedux: { isLoggedIn }} = useTogglersRedux();
+    const { togglersRedux: { isLogged, isUserFetching }} = useTogglersRedux();
+    const { refreshUser } = useUser();
+
+    useEffect(() => {
+        refreshUser();
+    }, []);
 
     return (
         <Suspense fallback = { <Spinner /> }>
-            <Private />
-            {/* {
-                isLoggedIn
-                    ? <Private />
-                    : <Public />
-            } */}
+            { isLogged ? <Private /> : <Public /> }
+            { isUserFetching && <Spinner absolute /> }
         </Suspense>
     );
 };
