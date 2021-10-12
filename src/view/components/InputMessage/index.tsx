@@ -35,9 +35,9 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
 
     const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => setMessage(() => event.target.value);
 
-    const onButtonClickHandle = () => {
+    const submitForm = () => {
         if (!isEditing) {
-            createMessageAction({ body: { text: message, username: user.username! }});
+            createMessageAction({ body: { text: message.trim(), username: user.username! }});
             setMessage('');
         } else if (editState.id && editState.text) {
             editMessageAction({ id: editState.id, body: { text: message }});
@@ -46,10 +46,13 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
         }
     };
 
+    const onButtonClickHandle = () => {
+        submitForm();
+    };
+
     const onEnterPressHandle: KeyboardEventHandler<HTMLInputElement> = (event) => {
         if (message && event.key === 'Enter') {
-            createMessageAction({ body: { text: message, username: user.username! }});
-            setMessage('');
+            submitForm();
         }
     };
 

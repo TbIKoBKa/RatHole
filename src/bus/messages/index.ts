@@ -9,11 +9,7 @@ import { useSelector } from '../../tools/hooks';
 import * as actions from './saga/actions';
 
 // Types
-// import { MessagesState } from './types';
 import * as types from './saga/types';
-
-// Interfaces
-// import { messagesActions } from './slice';
 
 // Hooks
 export const useMessages = () => {
@@ -24,6 +20,7 @@ export const useMessages = () => {
     }));
 
     useEffect(() => {
+        dispatch(actions.fetchMessagesActionAsync());
         const timerId = setInterval(() => dispatch(actions.fetchMessagesActionAsync()), 1000);
 
         return () => clearInterval(timerId);

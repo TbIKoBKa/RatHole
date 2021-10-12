@@ -16,7 +16,7 @@ import * as types from '../types';
 export function* deleteMessage({ payload }: ReturnType<types.DeleteMessageContract>) {
     const result: boolean | null = yield makeRequest<boolean>({
         fetcher:     () => API.deleteMessage(payload),
-        togglerType: 'isUserFetching',
+        togglerType: 'isMessagesFetching',
     });
 
     if (result !== null) {

@@ -17,7 +17,7 @@ import { Message } from '../../types';
 export function* createMessage({ payload }: ReturnType<types.CreateMessageContract>) {
     const result: Message | null = yield makeRequest<Message>({
         fetcher:     () => API.createMessage(payload),
-        togglerType: 'isUserFetching',
+        togglerType: 'isMessagesFetching',
     });
 
     if (result !== null) {
