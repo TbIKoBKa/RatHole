@@ -8,7 +8,7 @@ import { UserState } from './types';
 import * as reducers from './reducers';
 
 const initialState: UserState = {
-    id:       null,
+    _id:      null,
     username: null,
 };
 

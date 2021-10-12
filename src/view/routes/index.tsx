@@ -18,10 +18,13 @@ export const Routes: FC = () => {
         refreshUser();
     }, []);
 
+    if (isUserFetching) {
+        return <Spinner />;
+    }
+
     return (
         <Suspense fallback = { <Spinner /> }>
             { isLogged ? <Private /> : <Public /> }
-            { isUserFetching && <Spinner absolute /> }
         </Suspense>
     );
 };

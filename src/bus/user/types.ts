@@ -6,7 +6,7 @@ export type UserId = string | null
 export type Username = string | null
 
 export type UserState = {
-    id: UserId
+    _id: UserId
     username: Username
 }
 

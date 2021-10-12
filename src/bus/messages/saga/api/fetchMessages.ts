@@ -1,11 +1,9 @@
 // Tools
-import { ControlledError } from '../../../../tools/utils';
 import { API_URL } from '../../../../init/constants';
 
-// Types
-import * as types from '../../types';
+import { fetchMessagesContract } from './types';
 
-export const fetchMessages: () => Promise<types.MessagesState> = async () => {
+export const fetchMessages: fetchMessagesContract = async () => {
     const response = await fetch(`${API_URL}/messages`, {
         method:  'GET',
         headers: {
@@ -14,14 +12,10 @@ export const fetchMessages: () => Promise<types.MessagesState> = async () => {
     });
 
     if (response.status !== 200) {
-        throw new ControlledError({
-            message:    'fetchMessages failed',
-            statusCode: response.status,
-            data:       {
-                test: '123',
-            },
-        });
+        throw new Error('fetch failed');
     }
 
-    return response.json();
+    const result = await response.json();
+
+    return result.reverse();
 };

@@ -6,10 +6,11 @@ import { useEffect } from 'react';
 import { useSelector } from '../../tools/hooks';
 
 // Saga actions
-import { fetchMessagesActionAsync } from './saga/actions';
+import * as actions from './saga/actions';
 
 // Types
 // import { MessagesState } from './types';
+import * as types from './saga/types';
 
 // Interfaces
 // import { messagesActions } from './slice';
@@ -23,10 +24,16 @@ export const useMessages = () => {
     }));
 
     useEffect(() => {
-        dispatch(fetchMessagesActionAsync());
+        const timerId = setInterval(() => dispatch(actions.fetchMessagesActionAsync()), 1000);
+
+        return () => clearInterval(timerId);
     }, []);
 
     return {
         ...selector,
+        fetchMessagesAction: () => dispatch(actions.fetchMessagesActionAsync()),
+        createMessageAction: (payload: types.CreateMessageState) => dispatch(actions.createMessageActionAsync(payload)),
+        editMessageAction:   (payload: types.EditMessageState) => dispatch(actions.editMessageActionAsync(payload)),
+        deleteMessageAction: (payload: types.DeleteMessageState) => dispatch(actions.deleteMessageActionAsync(payload)),
     };
 };

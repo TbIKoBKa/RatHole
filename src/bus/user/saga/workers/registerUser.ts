@@ -1,6 +1,7 @@
 // Core
 import { put } from 'redux-saga/effects';
 import { togglerCreatorAction } from '../../../client/togglers';
+import localStore from 'store';
 
 // Actions
 import { userActions } from '../../slice';
@@ -13,15 +14,18 @@ import { makeRequest } from '../../../../tools/utils';
 
 // Types
 import { RegisterUserContract } from '../types';
+import { UserState } from '../../types';
 
 export function* registerUser({ payload: { username }}: ReturnType<RegisterUserContract>) {
-    const result: string | null = yield makeRequest({
+    const result: UserState | null = yield makeRequest({
         fetcher:      () => registerUserAsync(username),
         togglerType:  'isUserRegistrating',
         succesAction: userActions.setUser,
     });
 
     if (result !== null) {
+        localStore.set('userId', result._id);
+
         yield put(togglerCreatorAction({
             type:  'isLogged',
             value: true,

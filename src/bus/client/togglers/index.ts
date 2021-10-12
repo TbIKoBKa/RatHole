@@ -12,6 +12,7 @@ const initialState = {
     isUserFetching:     false,
     isUserRegistrating: false,
     isLogged:           false,
+    isEditingMessage:   false,
 };
 
 // Types

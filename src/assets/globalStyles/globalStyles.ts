@@ -8,6 +8,10 @@ import reset from 'styled-reset';
 export const GlobalStyles = createGlobalStyle`
     ${reset}
 
+    * {
+        box-sizing: border-box;
+    }
+
     input {
         color: white !important;
         padding: 8px 12px !important;

@@ -20,5 +20,8 @@ function* watchRegisterUser(): SagaIterator {
 }
 
 export function* watchUser(): SagaIterator {
-    yield all([ call(watchRefreshUser), call(watchRegisterUser) ]);
+    yield all([
+        call(watchRefreshUser),
+        call(watchRegisterUser),
+    ]);
 }
