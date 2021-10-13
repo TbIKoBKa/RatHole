@@ -10,6 +10,7 @@ import { InputWrapper, TextField } from './styles';
 // Hooks
 import { useUser } from '../../../bus/user';
 import { useEdit } from '../../../bus/client/edit';
+import { useKeys } from '../../../bus/client/keys';
 
 // Types
 import { CreateMessageActionAsync, CreateMessageState, EditMessageActionAsync, EditMessageState } from '../../../bus/messages/saga/types';
@@ -26,6 +27,31 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
     const [ message, setMessage ] = useState<string>('');
     const { editState, isEditing, resetEdit } = useEdit();
     const { user } = useUser();
+    const { toggleKey } = useKeys();
+
+    useEffect(() => {
+        document.addEventListener('keypress', ({ key }) => {
+            if (key >= '0') {
+                setMessage((prevState) => prevState + key);
+            }
+        });
+
+        document.addEventListener('keydown', ({ key }) => {
+            console.log('down', key);
+            toggleKey(key);
+        });
+
+        document.addEventListener('keyup', ({ key }) => {
+            console.log('up', key);
+            toggleKey(key);
+        });
+
+        return () => {
+            document.removeEventListener('keypress', () => void 0);
+            document.removeEventListener('keydown', () => void 0);
+            document.removeEventListener('keyup', () => void 0);
+        };
+    }, []);
 
     useEffect(() => {
         if (isEditing && editState.text) {
@@ -50,7 +76,8 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
         submitForm();
     };
 
-    const onEnterPressHandle: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    const onKeyPressHandle: KeyboardEventHandler<HTMLInputElement> = (event) => {
+        console.log(event);
         if (message && event.key === 'Enter') {
             submitForm();
         }
@@ -74,7 +101,7 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
             <TextField
                 value = { message }
                 onChange = { onChangeHandle }
-                onKeyPress = { onEnterPressHandle }
+                onKeyPress = { onKeyPressHandle }
             />
             <Button
                 children = { <Done /> }

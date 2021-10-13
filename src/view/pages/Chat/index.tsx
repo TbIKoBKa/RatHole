@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 import { ChatHeader, ChatBody } from '../../containers';
 
 // Components
-import { ErrorBoundary, InputMessage } from '../../components';
+import { ErrorBoundary, InputMessage, Keyboard } from '../../components';
 
 // Elements
 import { Spinner } from '../../elements';
@@ -36,6 +36,7 @@ const Chat: FC = () => {
                 createMessageAction = { createMessageAction }
                 editMessageAction = { editMessageAction }
             />
+            <Keyboard />
         </ChatContainer>
     );
 };

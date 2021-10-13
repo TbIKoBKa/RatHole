@@ -11,6 +11,7 @@ export const Message = muiStyled(MuiListItem)({
     padding:      '10px 20px',
     marginBottom: '12px',
     minWidth:     '150px',
+    maxWidth:     '100%',
 });
 
 export const MessageLeftside = muiStyled('div')({
@@ -39,9 +40,11 @@ export const MessageUsername = muiStyled(MuiListItemText)({
 });
 
 export const MessageText = muiStyled(MuiListItemText)({
-    color:                      'white',
+    color: 'white',
+
     [ ' .MuiTypography-root' ]: {
-        fontSize: '20px',
+        fontSize:  '20px',
+        wordBreak: 'break-all',
     },
 });
 

@@ -5,6 +5,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import togglers from '../../bus/client/togglers';
 import errors from '../../bus/client/errors';
 import edit from '../../bus/client/edit';
+import keys from '../../bus/client/keys';
 import messages from '../../bus/messages/slice';
 import user from '../../bus/user/slice';
 
@@ -19,6 +20,7 @@ export const store = configureStore({
         togglers,
         errors,
         edit,
+        keys,
         messages,
         user,
     },

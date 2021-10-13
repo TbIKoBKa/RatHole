@@ -13,11 +13,14 @@ const initialState = {
     isUserRegistrating: false,
     isLogged:           false,
     isEditingMessage:   false,
+    isKeyboardVisible:  false,
+    isCapitalize:       false,
+    keyboardLang:       0,
 };
 
 // Types
 export type TogglersKeys = keyof typeof initialState;
-type Options = { type: TogglersKeys, value: boolean };
+type Options = { type: TogglersKeys, value: boolean | number };
 
 // Slice
 export const toggrersSlice = createSlice({

@@ -21,7 +21,7 @@ export const useMessages = () => {
 
     useEffect(() => {
         dispatch(actions.fetchMessagesActionAsync());
-        const timerId = setInterval(() => dispatch(actions.fetchMessagesActionAsync()), 1000);
+        const timerId = setInterval(() => dispatch(actions.fetchMessagesActionAsync()), 30000);
 
         return () => clearInterval(timerId);
     }, []);

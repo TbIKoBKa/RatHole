@@ -1,5 +1,5 @@
 // Core
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useLayoutEffect, useRef } from 'react';
 
 // Components
 import { Message } from '../../components';
@@ -23,8 +23,19 @@ type Proptypes = {
 }
 
 export const ChatBody: FC<Proptypes> = ({ messages, deleteMessageAction }) => {
+    const listRef = useRef<null | HTMLUListElement>(null);
+
+    useLayoutEffect(() => {
+        if (listRef.current) {
+            listRef.current.scrollTo({
+                top: listRef.current.scrollHeight,
+            });
+        }
+    }, []);
+
     return (
         <List
+            ref = { listRef }
             subheader = { <li /> }>
             {messages.map((message, index) => (
                 <Fragment key = { `subheader-${message._id}` }>
