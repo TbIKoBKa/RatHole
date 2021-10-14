@@ -13,7 +13,7 @@ export const editMessage: editMessagesContract = async ({ id, body }) => {
         body: JSON.stringify(body),
     });
 
-    if (response.status !== 201) {
+    if (response.status !== 200) {
         throw new Error('edit failed');
     }
 

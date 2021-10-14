@@ -12,7 +12,7 @@ export const deleteMessage: deleteMessageContract = async ({ id }) => {
         },
     });
 
-    if (response.status !== 201) {
+    if (response.status !== 200) {
         throw new Error('delete failed');
     }
 

@@ -17,9 +17,11 @@ import { useMessages } from '../../../bus/messages';
 import {
     ChatContainer,
 } from './styles';
+import { useKeyboard } from '../../../bus/client/keyboard';
 
 const Chat: FC = () => {
-    const { messages, createMessageAction, editMessageAction, deleteMessageAction } = useMessages();
+    const { messages, sendMessageAction, deleteMessageAction } = useMessages();
+    const { isKeyboardVisible } = useKeyboard();
 
     if (!messages.length) {
         return <Spinner />;
@@ -33,10 +35,9 @@ const Chat: FC = () => {
                 messages = { messages }
             />
             <InputMessage
-                createMessageAction = { createMessageAction }
-                editMessageAction = { editMessageAction }
+                sendMessageAction = { sendMessageAction }
             />
-            <Keyboard />
+            {isKeyboardVisible && <Keyboard /> }
         </ChatContainer>
     );
 };

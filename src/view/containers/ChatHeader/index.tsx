@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 import { useUser } from '../../../bus/user';
 
 // Components
-import { Button } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 
 // Styles
 import {
@@ -14,22 +14,34 @@ import {
 } from './styles';
 
 // Icons
-import { Logout } from '@mui/icons-material';
+import { Logout, KeyboardAltRounded } from '@mui/icons-material';
+import { useKeyboard } from '../../../bus/client/keyboard';
 
 export const ChatHeader: FC = () => {
     const { user, resetUser } = useUser();
+    const { toggleKeyboard } = useKeyboard();
 
     const onClickButtonHandle = () => resetUser();
 
     return (
         <StyledHeader>
             <HeaderTitle>Welcome, {user.username}</HeaderTitle>
-            <Button
-                children = { <Logout /> }
-                color = 'error'
-                variant = 'contained'
-                onClick = { onClickButtonHandle }
-            />
+            <ButtonGroup
+                aria-label = 'contained button group'
+                variant = 'outlined'>
+                <Button
+                    children = { <KeyboardAltRounded /> }
+                    color = 'info'
+                    variant = 'contained'
+                    onClick = { toggleKeyboard }
+                />
+                <Button
+                    children = { <Logout /> }
+                    color = 'error'
+                    variant = 'contained'
+                    onClick = { onClickButtonHandle }
+                />
+            </ButtonGroup>
         </StyledHeader>
     );
 };

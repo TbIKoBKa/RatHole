@@ -1,5 +1,5 @@
 // Core
-import React, { ChangeEvent, FC, useState, KeyboardEventHandler, useEffect } from 'react';
+import React, { ChangeEvent, FC, useState, useEffect, useRef, KeyboardEventHandler } from 'react';
 
 // Components
 import { Button, Alert } from '@mui/material';
@@ -8,50 +8,66 @@ import { Button, Alert } from '@mui/material';
 import { InputWrapper, TextField } from './styles';
 
 // Hooks
-import { useUser } from '../../../bus/user';
 import { useEdit } from '../../../bus/client/edit';
-import { useKeys } from '../../../bus/client/keys';
-
-// Types
-import { CreateMessageActionAsync, CreateMessageState, EditMessageActionAsync, EditMessageState } from '../../../bus/messages/saga/types';
+import { useKeyboard } from '../../../bus/client/keyboard';
 
 // Icons
 import { Done } from '@mui/icons-material';
 
 type Proptypes = {
-    createMessageAction: (payload: CreateMessageState) => CreateMessageActionAsync
-    editMessageAction: (payload: EditMessageState) => EditMessageActionAsync
+    sendMessageAction: (message: string) => void
 }
 
-export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAction }) => {
+export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
+    const inputRef = useRef<null | HTMLInputElement>(null);
     const [ message, setMessage ] = useState<string>('');
-    const { editState, isEditing, resetEdit } = useEdit();
-    const { user } = useUser();
-    const { toggleKey } = useKeys();
+    const { editState, isEditing } = useEdit();
+    const { toggleActiveKey, isKeyboardVisible, toggleKeyboardLang } = useKeyboard();
+
+    const submitForm = () => {
+        sendMessageAction(message);
+        setMessage('');
+    };
+
+    const keyDownListenerCallback = ({ key }: KeyboardEvent) => {
+        toggleActiveKey({ keyCode: key, value: true });
+        inputRef.current?.focus();
+        if (key.length > 1) {
+            switch (key) {
+                case 'Backspace':
+                    setMessage((prevState) => prevState.slice(0, -1));
+                    break;
+                case 'Language':
+                    toggleKeyboardLang();
+                    break;
+                case 'Enter':
+                    submitForm();
+                    break;
+                default:
+            }
+        } else {
+            setMessage((prevState) => prevState + key);
+        }
+    };
+
+    const keyUpListenerCallback = ({ key }: KeyboardEvent) => {
+        toggleActiveKey({ keyCode: key, value: false });
+    };
 
     useEffect(() => {
-        document.addEventListener('keypress', ({ key }) => {
-            if (key >= '0') {
-                setMessage((prevState) => prevState + key);
-            }
-        });
-
-        document.addEventListener('keydown', ({ key }) => {
-            console.log('down', key);
-            toggleKey(key);
-        });
-
-        document.addEventListener('keyup', ({ key }) => {
-            console.log('up', key);
-            toggleKey(key);
-        });
+        if (isKeyboardVisible) {
+            document.addEventListener('keydown', keyDownListenerCallback, false);
+            document.addEventListener('keyup', keyUpListenerCallback, false);
+        } else {
+            document.removeEventListener('keydown', keyDownListenerCallback);
+            document.removeEventListener('keyup', () => void 0);
+        }
 
         return () => {
-            document.removeEventListener('keypress', () => void 0);
-            document.removeEventListener('keydown', () => void 0);
-            document.removeEventListener('keyup', () => void 0);
+            document.removeEventListener('keydown', keyDownListenerCallback);
+            document.removeEventListener('keyup', keyUpListenerCallback);
         };
-    }, []);
+    }, [ isKeyboardVisible, isEditing, message ]);
 
     useEffect(() => {
         if (isEditing && editState.text) {
@@ -59,17 +75,8 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
         }
     }, [ isEditing ]);
 
-    const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => setMessage(() => event.target.value);
-
-    const submitForm = () => {
-        if (!isEditing) {
-            createMessageAction({ body: { text: message.trim(), username: user.username! }});
-            setMessage('');
-        } else if (editState.id && editState.text) {
-            editMessageAction({ id: editState.id, body: { text: message }});
-            resetEdit();
-            setMessage('');
-        }
+    const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => {
+        !isKeyboardVisible && setMessage(() => event.target.value);
     };
 
     const onButtonClickHandle = () => {
@@ -77,7 +84,6 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
     };
 
     const onKeyPressHandle: KeyboardEventHandler<HTMLInputElement> = (event) => {
-        console.log(event);
         if (message && event.key === 'Enter') {
             submitForm();
         }
@@ -99,6 +105,7 @@ export const InputMessage: FC<Proptypes> = ({ createMessageAction, editMessageAc
                 )
             }
             <TextField
+                ref = { inputRef }
                 value = { message }
                 onChange = { onChangeHandle }
                 onKeyPress = { onKeyPressHandle }
