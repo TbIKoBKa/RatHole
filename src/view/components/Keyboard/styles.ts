@@ -13,15 +13,16 @@ interface KeyboardGridRowProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivE
 
 export const KeyboardGrid = styled.div`
     display: grid;
-    grid-template: repeat(6, 1fr) / 1fr;
-    grid-row-gap: 4px;
+    grid-template: repeat(5, 1fr) / 1fr;
+    grid-row-gap: 1px;
     width: 100%;
     max-height: 350px;
+    margin: 8px 0;
 `;
 
 export const KeyboardGridRow = styled.div<KeyboardGridRowProps>`
     display: grid;
-    grid-gap: 4px;
+    grid-gap: 1px;
     
     ${({ keyAmount, gridTemplateColumn }) => css`
         grid-template-columns: ${gridTemplateColumn ? gridTemplateColumn : `repeat(${keyAmount}, 1fr)`};
@@ -29,7 +30,11 @@ export const KeyboardGridRow = styled.div<KeyboardGridRowProps>`
 `;
 
 export const Key = muiStyled(Button)({
+    wordBreak:     'break-all',
+    fontSize:      '14px',
     height:        '50px',
+    lineHeight:    '1',
+    padding:       '2px',
     minWidth:      'auto',
     textTransform: 'none',
     color:         'white',
@@ -37,4 +42,5 @@ export const Key = muiStyled(Button)({
     [ '&:hover' ]: {
         borderStyle: 'inset',
     },
+
 });

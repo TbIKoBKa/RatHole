@@ -1,8 +1,5 @@
-// Core
-import { put } from 'redux-saga/effects';
-
 // Actions
-import { fetchMessagesActionAsync } from '../actions';
+import { messagesActions } from '../../slice';
 
 // Api
 import * as API from '../api';
@@ -15,12 +12,9 @@ import * as types from '../types';
 import { Message } from '../../types';
 
 export function* createMessage({ payload }: ReturnType<types.CreateMessageContract>) {
-    const result: Message | null = yield makeRequest<Message>({
-        fetcher:     () => API.createMessage(payload),
-        togglerType: 'isMessagesFetching',
+    yield makeRequest<Message>({
+        fetcher:      () => API.createMessage(payload),
+        togglerType:  'isMessagesFetching',
+        succesAction: messagesActions.addMessage,
     });
-
-    if (result !== null) {
-        yield put(fetchMessagesActionAsync());
-    }
 }

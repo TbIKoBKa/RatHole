@@ -2,7 +2,6 @@
 import React, { FC } from 'react';
 
 // Hooks
-import { useTogglersRedux } from '../../../bus/client/togglers';
 import { useKeyboard } from '../../../bus/client/keyboard';
 
 // Helpers
@@ -12,8 +11,7 @@ import { getRequiredKeyCode } from '../../../tools/helpers';
 import { KeyboardGrid, KeyboardGridRow, Key } from './styles';
 
 export const Keyboard: FC = () => {
-    const { togglersRedux: { isCapitalize }, setTogglerAction } = useTogglersRedux();
-    const { activeKeys, keyboardKeys } = useKeyboard();
+    const { activeKeys, keyboardKeys, isCapitalize, toggleCapitalize } = useKeyboard();
 
     return (
         <KeyboardGrid>
@@ -24,7 +22,7 @@ export const Keyboard: FC = () => {
                     keyAmount = { keys.length }>
                     {keys.map((key, index) => (
                         <Key
-                            key = { `key-${index}` }
+                            key = { index }
                             sx = {{
                                 backgroundColor: `${activeKeys.includes(key.keyCode) || (key.keyCode === 'Shift' && isCapitalize) ? 'rgba(25, 118, 210, 0.04)' : '#57aaff'}`,
                             }}
@@ -32,7 +30,7 @@ export const Keyboard: FC = () => {
                                 () => {
                                     document.dispatchEvent(new KeyboardEvent('keydown', { key: getRequiredKeyCode(key, isCapitalize), bubbles: true }));
                                     document.dispatchEvent(new KeyboardEvent('keyup', { key: getRequiredKeyCode(key, isCapitalize), bubbles: true }));
-                                    key.keyCode === 'Shift' && setTogglerAction({ type: 'isCapitalize', value: !isCapitalize });
+                                    key.keyCode === 'Shift' && toggleCapitalize();
                                 }
                             }>
                             {key.capitalizedKeyCode ? getRequiredKeyCode(key, isCapitalize) : key.label}

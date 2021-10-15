@@ -2,7 +2,7 @@
 import { put } from 'redux-saga/effects';
 
 // Actions
-import { fetchMessagesActionAsync } from '../actions';
+import { messagesActions } from '../../slice';
 
 // Api
 import * as API from '../api';
@@ -20,6 +20,6 @@ export function* deleteMessage({ payload }: ReturnType<types.DeleteMessageContra
     });
 
     if (result !== null) {
-        yield put(fetchMessagesActionAsync());
+        yield put(messagesActions.deleteMessage(payload.id));
     }
 }

@@ -5,13 +5,14 @@ import React, { FC } from 'react';
 import { ChatHeader, ChatBody } from '../../containers';
 
 // Components
-import { ErrorBoundary, InputMessage, Keyboard } from '../../components';
+import { ErrorBoundary, InputMessage, Keyboard, DeleteDialog } from '../../components';
 
 // Elements
 import { Spinner } from '../../elements';
 
 // Hooks
 import { useMessages } from '../../../bus/messages';
+import { useDelete } from '../../../bus/client/delete';
 
 // Styles
 import {
@@ -20,8 +21,9 @@ import {
 import { useKeyboard } from '../../../bus/client/keyboard';
 
 const Chat: FC = () => {
-    const { messages, sendMessageAction, deleteMessageAction } = useMessages();
+    const { messages, sendMessageAction } = useMessages();
     const { isKeyboardVisible } = useKeyboard();
+    const { isDeleting } = useDelete();
 
     if (!messages.length) {
         return <Spinner />;
@@ -30,14 +32,10 @@ const Chat: FC = () => {
     return (
         <ChatContainer>
             <ChatHeader />
-            <ChatBody
-                deleteMessageAction = { deleteMessageAction }
-                messages = { messages }
-            />
-            <InputMessage
-                sendMessageAction = { sendMessageAction }
-            />
+            <ChatBody messages = { messages } />
+            <InputMessage sendMessageAction = { sendMessageAction } />
             {isKeyboardVisible && <Keyboard /> }
+            {isDeleting && <DeleteDialog />}
         </ChatContainer>
     );
 };

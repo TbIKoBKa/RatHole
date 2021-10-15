@@ -2,11 +2,8 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useUser } from '../../../bus/user';
 
-// Components
-import { Button } from '@mui/material';
-
 // Styles
-import { RegistrationWrapper, Label, TextField } from './styles';
+import { RegistrationWrapper, Label, TextField, Button } from './styles';
 
 // Types
 import { Username } from '../../../bus/user/types';
@@ -35,10 +32,10 @@ export const Registation = () => {
             <Label children = 'Enter your ratname:'/>
             <TextField
                 color = 'primary'
-                id = 'filled-basic'
+                id = 'outlined-basic'
                 margin = 'dense'
                 value = { username === null ? '' : username }
-                variant = 'filled'
+                variant = 'outlined'
                 onChange = { onChangeHandle }
             />
             <Button

@@ -1,9 +1,10 @@
 // Core
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
 // Hooks
 import { useUser } from '../../../bus/user';
 import { useEdit } from '../../../bus/client/edit';
+import { useDelete } from '../../../bus/client/delete';
 
 // Components
 import { SpeedDialAction } from '@mui/material';
@@ -27,16 +28,19 @@ import { MoreHoriz, Edit, Delete } from '@mui/icons-material';
 
 // Types
 import { Message as TMessage } from '../../../bus/messages/types';
-import { DeleteMessageState, DeleteMessageActionAsync } from '../../../bus/messages/saga/types';
 
 type Proptypes = {
     message: TMessage
-    deleteMessageAction: (payload: DeleteMessageState) => DeleteMessageActionAsync
 }
 
-export const Message: FC<Proptypes> = ({ message, deleteMessageAction }) => {
+// eslint-disable-next-line init-declarations
+let timerId: ReturnType<typeof setTimeout> | void = void 0;
+
+export const Message: FC<Proptypes> = ({ message }) => {
     const { user } = useUser();
     const { setEditMessage } = useEdit();
+    const [ isOpenMenu, setIsOpenMenu ] = useState(false);
+    const { setDeleteMessage } = useDelete();
 
     return (
         <StyledMessage
@@ -59,11 +63,21 @@ export const Message: FC<Proptypes> = ({ message, deleteMessageAction }) => {
                         ariaLabel = 'SpeedDial basic example'
                         direction = 'left'
                         icon = { <MoreHoriz /> }
+                        open = { isOpenMenu }
                         sx = {{
                             [ ' .MuiButtonBase-root' ]: {
                                 background: `${message.username === user.username ? '#70b1f3' : '#2183e6'}`,
                             },
-                        }}>
+                        }}
+                        onClick = { () => { setIsOpenMenu(!isOpenMenu); } }
+                        onMouseEnter = { () => {
+                            if (isOpenMenu && timerId) {
+                                clearTimeout(timerId);
+                            }
+                        } }
+                        onMouseLeave = { () => {
+                            timerId = setTimeout(() => setIsOpenMenu(false), 1000);
+                        } }>
                         <SpeedDialAction
                             icon = { <Edit /> }
                             tooltipTitle = 'edit'
@@ -72,7 +86,7 @@ export const Message: FC<Proptypes> = ({ message, deleteMessageAction }) => {
                         <SpeedDialAction
                             icon = { <Delete /> }
                             tooltipTitle = 'delete'
-                            onClick = { () => deleteMessageAction({ id: message._id }) }
+                            onClick = { () => setDeleteMessage({ id: message._id }) }
                         />
                     </MessageMenu>
                 )

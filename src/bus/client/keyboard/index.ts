@@ -22,7 +22,8 @@ type KeyboardKeys = KeyRow[]
 const keyboardLangs: KeyboardKeys[] = [
     [
         {
-            keys: [
+            gridTemplateColumn: 'repeat(13, 1fr) 1.5fr',
+            keys:               [
                 { keyCode: '`', capitalizedKeyCode: '~' },
                 { keyCode: '1', capitalizedKeyCode: '!' },
                 { keyCode: '2', capitalizedKeyCode: '@' },
@@ -36,7 +37,7 @@ const keyboardLangs: KeyboardKeys[] = [
                 { keyCode: '0', capitalizedKeyCode: ')' },
                 { keyCode: '-', capitalizedKeyCode: '_' },
                 { keyCode: '=', capitalizedKeyCode: '+' },
-                { keyCode: 'Backspace', capitalizedKeyCode: false, label: '← Backspace' },
+                { keyCode: 'Backspace', capitalizedKeyCode: false, label: '←' },
             ],
         },
         {
@@ -59,9 +60,9 @@ const keyboardLangs: KeyboardKeys[] = [
             ],
         },
         {
-            gridTemplateColumn: '10% repeat(11, 1fr) 10%',
+            gridTemplateColumn: '10% repeat(11, 1fr) 12%',
             keys:               [
-                { keyCode: 'CapsLock', capitalizedKeyCode: false, label: 'CapsLock' },
+                { keyCode: 'CLock', capitalizedKeyCode: false, label: 'CapsLock' },
                 { keyCode: 'a', capitalizedKeyCode: true },
                 { keyCode: 's', capitalizedKeyCode: true },
                 { keyCode: 'd', capitalizedKeyCode: true },
@@ -73,7 +74,7 @@ const keyboardLangs: KeyboardKeys[] = [
                 { keyCode: 'l', capitalizedKeyCode: true },
                 { keyCode: ';', capitalizedKeyCode: ':' },
                 { keyCode: '\'', capitalizedKeyCode: '"' },
-                { keyCode: 'Enter', capitalizedKeyCode: false, label: '← ENTER' },
+                { keyCode: 'Enter', capitalizedKeyCode: false, label: 'ENTER' },
             ],
         },
         {
@@ -108,7 +109,8 @@ const keyboardLangs: KeyboardKeys[] = [
     ],
     [
         {
-            keys: [
+            gridTemplateColumn: 'repeat(13, 1fr) 1.5fr',
+            keys:               [
                 { keyCode: '`', capitalizedKeyCode: '~' },
                 { keyCode: '1', capitalizedKeyCode: '!' },
                 { keyCode: '2', capitalizedKeyCode: '@' },
@@ -122,7 +124,7 @@ const keyboardLangs: KeyboardKeys[] = [
                 { keyCode: '0', capitalizedKeyCode: ')' },
                 { keyCode: '-', capitalizedKeyCode: '_' },
                 { keyCode: '=', capitalizedKeyCode: '+' },
-                { keyCode: 'Backspace', capitalizedKeyCode: false, label: '← Backspace' },
+                { keyCode: 'Backspace', capitalizedKeyCode: false, label: '←' },
             ],
         },
         {
@@ -145,9 +147,9 @@ const keyboardLangs: KeyboardKeys[] = [
             ],
         },
         {
-            gridTemplateColumn: '10% repeat(11, 1fr) 10%',
+            gridTemplateColumn: '12% repeat(11, 1fr) 12%',
             keys:               [
-                { keyCode: 'CapsLock', capitalizedKeyCode: false, label: 'CapsLock' },
+                { keyCode: 'CLock', capitalizedKeyCode: false, label: 'CapsLock' },
                 { keyCode: 'ф', capitalizedKeyCode: true },
                 { keyCode: 'ы', capitalizedKeyCode: true },
                 { keyCode: 'в', capitalizedKeyCode: true },
@@ -159,7 +161,7 @@ const keyboardLangs: KeyboardKeys[] = [
                 { keyCode: 'д', capitalizedKeyCode: true },
                 { keyCode: 'ж', capitalizedKeyCode: true },
                 { keyCode: 'э', capitalizedKeyCode: true },
-                { keyCode: 'Enter', capitalizedKeyCode: false, label: '← ENTER' },
+                { keyCode: 'Enter', capitalizedKeyCode: false, label: 'ENTER' },
             ],
         },
         {
@@ -246,13 +248,15 @@ export const useKeyboard = () => {
         activeKeys:   state.keyboard.activeKeyCodes,
         keyboardKeys: state.keyboard.keyboardKeys,
     }));
-    const { togglersRedux: { isKeyboardVisible }, setTogglerAction } = useTogglersRedux();
+    const { togglersRedux: { isKeyboardVisible, isCapitalize }, setTogglerAction } = useTogglersRedux();
 
     return {
         ...selector,
         isKeyboardVisible,
-        toggleKeyboard:  () => setTogglerAction({ type: 'isKeyboardVisible', value: !isKeyboardVisible }),
-        toggleActiveKey: (payload: ToggleActionKeyPayload) => {
+        toggleKeyboard:   () => setTogglerAction({ type: 'isKeyboardVisible', value: !isKeyboardVisible }),
+        isCapitalize,
+        toggleCapitalize: (value?: boolean) => setTogglerAction({ type: 'isCapitalize', value: typeof value === 'boolean' ? value : !isCapitalize }),
+        toggleActiveKey:  (payload: ToggleActionKeyPayload) => {
             dispatch(keyboardActions.toggleActiveKey(payload));
         },
         toggleKeyboardLang: () => dispatch(keyboardActions.toggleKeyboardLang()),

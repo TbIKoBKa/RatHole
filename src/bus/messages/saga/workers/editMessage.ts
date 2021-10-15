@@ -1,8 +1,5 @@
-// Core
-import { put } from 'redux-saga/effects';
-
 // Actions
-import { fetchMessagesActionAsync } from '../actions';
+import { messagesActions } from '../../slice';
 
 // Api
 import * as API from '../api';
@@ -15,12 +12,9 @@ import * as types from '../types';
 import { Message } from '../../types';
 
 export function* editMessage({ payload }: ReturnType<types.EditMessageContract>) {
-    const result: Message | null = yield makeRequest<Message>({
-        fetcher:     () => API.editMessage(payload),
-        togglerType: 'isMessagesFetching',
+    yield makeRequest<Message>({
+        fetcher:      () => API.editMessage(payload),
+        togglerType:  'isMessagesFetching',
+        succesAction: messagesActions.editMessage,
     });
-
-    if (result !== null) {
-        yield put(fetchMessagesActionAsync());
-    }
 }

@@ -15,14 +15,12 @@ import { getMessageDate, isEqualDays } from '../../../tools/helpers';
 
 // Types
 import { MessagesState } from '../../../bus/messages/types';
-import { DeleteMessageState, DeleteMessageActionAsync } from '../../../bus/messages/saga/types';
 
 type Proptypes = {
     messages: MessagesState
-    deleteMessageAction: (payload: DeleteMessageState) => DeleteMessageActionAsync
 }
 
-export const ChatBody: FC<Proptypes> = ({ messages, deleteMessageAction }) => {
+export const ChatBody: FC<Proptypes> = ({ messages }) => {
     const listRef = useRef<null | HTMLUListElement>(null);
 
     useLayoutEffect(() => {
@@ -31,7 +29,7 @@ export const ChatBody: FC<Proptypes> = ({ messages, deleteMessageAction }) => {
                 top: listRef.current.scrollHeight,
             });
         }
-    }, []);
+    }, [ messages.length ]);
 
     return (
         <List
@@ -44,10 +42,7 @@ export const ChatBody: FC<Proptypes> = ({ messages, deleteMessageAction }) => {
                             ? <ListSubheader>{getMessageDate(new Date(message.createdAt))}</ListSubheader>
                             : null
                     }
-                    <Message
-                        deleteMessageAction = { deleteMessageAction }
-                        message = { message }
-                    />
+                    <Message message = { message } />
                 </Fragment>
             ))}
         </List>

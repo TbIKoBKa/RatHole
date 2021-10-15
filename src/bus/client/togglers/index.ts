@@ -15,6 +15,7 @@ const initialState = {
     isEditingMessage:   false,
     isKeyboardVisible:  false,
     isCapitalize:       false,
+    isDeletingMessage:  false,
 };
 
 // Types

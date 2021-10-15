@@ -12,7 +12,7 @@ import { useEdit } from '../../../bus/client/edit';
 import { useKeyboard } from '../../../bus/client/keyboard';
 
 // Icons
-import { Done } from '@mui/icons-material';
+import { Done, ClearRounded } from '@mui/icons-material';
 
 type Proptypes = {
     sendMessageAction: (message: string) => void
@@ -21,8 +21,8 @@ type Proptypes = {
 export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     const inputRef = useRef<null | HTMLInputElement>(null);
     const [ message, setMessage ] = useState<string>('');
-    const { editState, isEditing } = useEdit();
-    const { toggleActiveKey, isKeyboardVisible, toggleKeyboardLang } = useKeyboard();
+    const { editState, isEditing, resetEdit } = useEdit();
+    const { toggleActiveKey, isKeyboardVisible, toggleKeyboardLang, toggleCapitalize } = useKeyboard();
 
     const submitForm = () => {
         sendMessageAction(message);
@@ -35,13 +35,33 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
         if (key.length > 1) {
             switch (key) {
                 case 'Backspace':
-                    setMessage((prevState) => prevState.slice(0, -1));
+                    setMessage((prevState) => {
+                        const selection = window.getSelection()?.toString();
+                        let newState = '';
+
+                        if (selection) {
+                            newState = prevState.replace(selection.toString(), '');
+                            inputRef.current!.selectionStart = prevState.indexOf(selection);
+                        } else {
+                            const caretPos = inputRef.current!.selectionStart;
+                            newState = prevState.split('').filter((char, index) => caretPos !== index + 1)
+                                .join('');
+                        }
+
+                        return newState;
+                    });
+                    if (inputRef.current) {
+                        inputRef.current.selectionStart = 3;
+                    }
                     break;
                 case 'Language':
                     toggleKeyboardLang();
                     break;
                 case 'Enter':
                     submitForm();
+                    break;
+                case 'Shift':
+                    toggleCapitalize(true);
                     break;
                 default:
             }
@@ -52,6 +72,14 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
 
     const keyUpListenerCallback = ({ key }: KeyboardEvent) => {
         toggleActiveKey({ keyCode: key, value: false });
+        if (key.length > 1) {
+            switch (key) {
+                case 'Shift':
+                    toggleCapitalize(false);
+                    break;
+                default:
+            }
+        }
     };
 
     useEffect(() => {
@@ -72,11 +100,13 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     useEffect(() => {
         if (isEditing && editState.text) {
             setMessage(editState.text);
+        } else {
+            setMessage('');
         }
-    }, [ isEditing ]);
+    }, [ isEditing, editState.id ]);
 
     const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => {
-        !isKeyboardVisible && setMessage(() => event.target.value);
+        setMessage(() => event.target.value);
     };
 
     const onButtonClickHandle = () => {
@@ -94,7 +124,25 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
             {
                 isEditing && (
                     <Alert
-                        children = { `${editState.text}` }
+                        children = {
+                            <>
+                                {editState.text}
+                                <Button
+                                    children = { <ClearRounded /> }
+                                    sx = {{
+                                        lineHeight:    1,
+                                        padding:       0,
+                                        background:    '#ffffff',
+                                        minWidth:      'auto',
+                                        marginLeft:    '12px',
+                                        [ '&:hover' ]: {
+                                            background: '#ffffff88',
+                                        },
+                                    }}
+                                    onClick = { resetEdit }
+                                />
+                            </>
+                        }
                         severity = 'info'
                         sx = {{
                             position: 'absolute',
