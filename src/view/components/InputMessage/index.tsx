@@ -50,9 +50,6 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
 
                         return newState;
                     });
-                    if (inputRef.current) {
-                        inputRef.current.selectionStart = 3;
-                    }
                     break;
                 case 'Language':
                     toggleKeyboardLang();
@@ -106,7 +103,7 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     }, [ isEditing, editState.id ]);
 
     const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => {
-        setMessage(() => event.target.value);
+        !isKeyboardVisible && setMessage(() => event.target.value);
     };
 
     const onButtonClickHandle = () => {

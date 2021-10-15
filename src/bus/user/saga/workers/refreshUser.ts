@@ -16,9 +16,10 @@ import { RefreshUserContract } from '../types';
 
 export function* refreshUser({ payload: { userId }}: ReturnType<RefreshUserContract>) {
     const result: string | null = yield makeRequest({
-        fetcher:      () => fetchUser(userId),
-        togglerType:  'isUserFetching',
-        succesAction: userActions.setUser,
+        fetcher:          () => fetchUser(userId),
+        togglerType:      'isUserFetching',
+        succesAction:     userActions.setUser,
+        isControlledMode: true,
     });
 
     if (result !== null) {

@@ -13,8 +13,9 @@ import { Message } from '../../types';
 
 export function* createMessage({ payload }: ReturnType<types.CreateMessageContract>) {
     yield makeRequest<Message>({
-        fetcher:      () => API.createMessage(payload),
-        togglerType:  'isMessagesFetching',
-        succesAction: messagesActions.addMessage,
+        fetcher:          () => API.createMessage(payload),
+        togglerType:      'isMessagesFetching',
+        succesAction:     messagesActions.addMessage,
+        isControlledMode: true,
     });
 }

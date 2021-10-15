@@ -19,7 +19,7 @@ import { useKeyboard } from '../../../bus/client/keyboard';
 
 export const ChatHeader: FC = () => {
     const { user, resetUser } = useUser();
-    const { toggleKeyboard } = useKeyboard();
+    const { toggleKeyboard, resetKeyboard } = useKeyboard();
 
     const onClickButtonHandle = () => resetUser();
 
@@ -39,7 +39,10 @@ export const ChatHeader: FC = () => {
                     children = { <Logout /> }
                     color = 'error'
                     variant = 'contained'
-                    onClick = { onClickButtonHandle }
+                    onClick = { () => {
+                        resetKeyboard();
+                        onClickButtonHandle();
+                    } }
                 />
             </ButtonGroup>
         </StyledHeader>

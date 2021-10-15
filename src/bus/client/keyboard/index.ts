@@ -262,6 +262,7 @@ export const useKeyboard = () => {
         toggleKeyboardLang: () => dispatch(keyboardActions.toggleKeyboardLang()),
         resetKeyboard:      () => {
             dispatch(keyboardActions.resetKeyboard());
+            setTogglerAction({ type: 'isKeyboardVisible', value: false });
         },
     };
 };
