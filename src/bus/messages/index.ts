@@ -54,6 +54,7 @@ export const useMessages = () => {
             if (isDeleting && deleteState.id) {
                 dispatch(actions.deleteMessageActionAsync({ id: deleteState.id }));
                 resetDelete();
+                resetEdit();
             }
         },
         sendMessageAction: () => {
