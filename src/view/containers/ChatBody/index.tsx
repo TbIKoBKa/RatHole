@@ -39,8 +39,7 @@ export const ChatBody: FC<Proptypes> = ({ messages }) => {
                 <Fragment key = { `subheader-${message._id}` }>
                     {
                         !isEqualDays(new Date(messages[ index - 1 ]?.createdAt), new Date(message.createdAt))
-                            ? <ListSubheader>{getMessageDate(new Date(message.createdAt))}</ListSubheader>
-                            : null
+                            && <ListSubheader>{getMessageDate(new Date(message.createdAt))}</ListSubheader>
                     }
                     <Message message = { message } />
                 </Fragment>
