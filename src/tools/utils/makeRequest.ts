@@ -7,7 +7,6 @@ import { TogglersKeys } from '../../bus/client/togglers';
 
 // Action
 import { togglerCreatorAction } from '../../bus/client/togglers';
-import { IControlledError } from './controlledError';
 
 type OptionsType<T> = {
     fetcher: (...args: any) => Promise<T>;
@@ -62,10 +61,8 @@ export function* makeRequest<T>(options: OptionsType<T>) {
         }
 
         if (isControlledMode) {
-            const controlledError = error as IControlledError;
-            yield put(errorsActions.setControlledError(controlledError));
-
-            return controlledError;
+            // eslint-disable-next-line no-extra-parens
+            yield put(errorsActions.setControlledError({ message: (<Error>error).message }));
         }
 
         return null;

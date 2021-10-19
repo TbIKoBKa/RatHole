@@ -17,7 +17,7 @@ import { Alert, Stack } from '@mui/material';
 import { Spinner } from '../elements';
 
 export const Routes: FC = () => {
-    const { togglersRedux: { isLogged, isUserFetching }} = useTogglersRedux();
+    const { togglersRedux: { isLogged, isUserFetching, isUserRegistrating }} = useTogglersRedux();
     const { refreshUser } = useUser();
     const { errors, unsetControlledErrorAction } = useErrors();
 
@@ -25,12 +25,7 @@ export const Routes: FC = () => {
         refreshUser();
     }, []);
 
-    // useEffect(() => {
-    //     setControlledErrorAction({ data: 'data', errorId: '0', message: 'message', name: 'error', statusCode: 404 });
-    //     setControlledErrorAction({ data: 'data', errorId: '1', message: 'message2', name: 'error', statusCode: 404 });
-    // }, []);
-
-    if (isUserFetching) {
+    if (isUserFetching || isUserRegistrating) {
         return <Spinner />;
     }
 
@@ -44,7 +39,7 @@ export const Routes: FC = () => {
                     }}>
                     {errors.map((error) => (
                         <Alert
-                            id = { error.errorId }
+                            key = { error.id }
                             severity = 'error'
                             sx = {{
                                 backgroundColor: '#0f72d4',
@@ -52,7 +47,7 @@ export const Routes: FC = () => {
                                 marginBottom:    '6px',
                                 color:           'white',
                             }}
-                            onClose = { () => { unsetControlledErrorAction({ errorId: error.errorId }); } }>
+                            onClose = { () => { unsetControlledErrorAction({ id: error.id }); } }>
                             {error.message}
                         </Alert>
                     ))}

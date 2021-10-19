@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 
 // Hooks
 import { useKeyboard } from '../../../bus/client/keyboard';
+import { useInputMessage } from '../../../bus/client/input';
 
 // Helpers
 import { getRequiredKeyCode } from '../../../tools/helpers';
@@ -11,7 +12,8 @@ import { getRequiredKeyCode } from '../../../tools/helpers';
 import { KeyboardGrid, KeyboardGridRow, Key } from './styles';
 
 export const Keyboard: FC = () => {
-    const { activeKeys, keyboardKeys, isCapitalize, toggleCapitalize } = useKeyboard();
+    const { activeKeys, keyboardKeys, isCapitalize, toggleCapitalize, toggleKeyboardLang } = useKeyboard();
+    const { inputState, setInputMessage } = useInputMessage();
 
     return (
         <KeyboardGrid>
@@ -30,7 +32,24 @@ export const Keyboard: FC = () => {
                                 () => {
                                     document.dispatchEvent(new KeyboardEvent('keydown', { key: getRequiredKeyCode(key, isCapitalize), bubbles: true }));
                                     document.dispatchEvent(new KeyboardEvent('keyup', { key: getRequiredKeyCode(key, isCapitalize), bubbles: true }));
-                                    key.keyCode === 'Shift' && toggleCapitalize();
+
+                                    if (key.keyCode.length <= 2) {
+                                        setInputMessage({ text: `${inputState.text === null ? '' : inputState.text}${isCapitalize ? key.keyCode.toUpperCase() : key.keyCode}` });
+                                    } else {
+                                        switch (key.keyCode) {
+                                            case 'Shift':
+                                                toggleCapitalize();
+                                                break;
+                                            case 'Backspace':
+                                                inputState.text && setInputMessage({ text: inputState.text.split('').slice(0, -1)
+                                                    .join('') });
+                                                break;
+                                            case 'Language':
+                                                toggleKeyboardLang();
+                                                break;
+                                            default:
+                                        }
+                                    }
                                 }
                             }>
                             {key.capitalizedKeyCode ? getRequiredKeyCode(key, isCapitalize) : key.label}

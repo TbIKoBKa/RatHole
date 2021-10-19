@@ -15,17 +15,14 @@ import { makeRequest } from '../../../../tools/utils';
 import { RefreshUserContract } from '../types';
 
 export function* refreshUser({ payload: { userId }}: ReturnType<RefreshUserContract>) {
-    const result: string | null = yield makeRequest({
-        fetcher:          () => fetchUser(userId),
-        togglerType:      'isUserFetching',
-        succesAction:     userActions.setUser,
-        isControlledMode: true,
-    });
-
-    if (result !== null) {
-        yield put(togglerCreatorAction({
+    yield makeRequest({
+        fetcher:           () => fetchUser(userId),
+        togglerType:       'isUserFetching',
+        succesAction:      userActions.setUser,
+        successSideEffect: () => put(togglerCreatorAction({
             type:  'isLogged',
             value: true,
-        }));
-    }
+        })),
+        isControlledMode: true,
+    });
 }

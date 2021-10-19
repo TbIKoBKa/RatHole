@@ -18,18 +18,17 @@ import { UserState } from '../../types';
 
 export function* registerUser({ payload: { username }}: ReturnType<RegisterUserContract>) {
     const result: UserState | null = yield makeRequest({
-        fetcher:          () => registerUserAsync(username),
-        togglerType:      'isUserRegistrating',
-        succesAction:     userActions.setUser,
+        fetcher:           () => registerUserAsync(username),
+        togglerType:       'isUserRegistrating',
+        succesAction:      userActions.setUser,
+        successSideEffect: () => put(togglerCreatorAction({
+            type:  'isLogged',
+            value: true,
+        })),
         isControlledMode: true,
     });
 
     if (result !== null) {
         localStore.set('userId', result._id);
-
-        yield put(togglerCreatorAction({
-            type:  'isLogged',
-            value: true,
-        }));
     }
 }

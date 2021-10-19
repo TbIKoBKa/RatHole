@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 
 // Hooks
+import { useInputMessage } from '../client/input';
 import { useEdit } from '../client/edit';
 import { useDelete } from '../client/delete';
 import { useUser } from '../user';
@@ -20,6 +21,7 @@ const isDev = process.env.NODE_ENV === 'development';
 
 export const useMessages = () => {
     const dispatch = useDispatch();
+    const { inputState, resetInputMessage } = useInputMessage();
     const { editState, isEditing, resetEdit } = useEdit();
     const { isDeleting, deleteState, resetDelete } = useDelete();
     const { user } = useUser();
@@ -54,12 +56,21 @@ export const useMessages = () => {
                 resetDelete();
             }
         },
-        sendMessageAction: (message: string) => {
-            if (!isEditing) {
-                dispatch(actions.createMessageActionAsync({ body: { text: message.trim(), username: user.username! }}));
-            } else if (editState.id && editState.text) {
-                dispatch(actions.editMessageActionAsync({ id: editState.id, body: { text: message }}));
-                resetEdit();
+        sendMessageAction: () => {
+            if (inputState.text) {
+                if (!isEditing) {
+                    dispatch(actions.createMessageActionAsync({
+                        body: {
+                            text:     inputState.text.trim(),
+                            username: user.username!,
+                        },
+                    }));
+                } else if (editState.id && editState.text) {
+                    dispatch(actions.editMessageActionAsync({ id: editState.id, body: { text: inputState.text }}));
+                    resetEdit();
+                }
+
+                resetInputMessage();
             }
         },
     };

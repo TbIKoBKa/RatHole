@@ -62,7 +62,7 @@ const keyboardLangs: KeyboardKeys[] = [
         {
             gridTemplateColumn: '10% repeat(11, 1fr) 12%',
             keys:               [
-                { keyCode: 'CLock', capitalizedKeyCode: false, label: 'CapsLock' },
+                { keyCode: 'CapsLock', capitalizedKeyCode: false, label: 'CapsLock' },
                 { keyCode: 'a', capitalizedKeyCode: true },
                 { keyCode: 's', capitalizedKeyCode: true },
                 { keyCode: 'd', capitalizedKeyCode: true },
@@ -149,7 +149,7 @@ const keyboardLangs: KeyboardKeys[] = [
         {
             gridTemplateColumn: '12% repeat(11, 1fr) 12%',
             keys:               [
-                { keyCode: 'CLock', capitalizedKeyCode: false, label: 'CapsLock' },
+                { keyCode: 'CapsLock', capitalizedKeyCode: false, label: 'CapsLock' },
                 { keyCode: 'ф', capitalizedKeyCode: true },
                 { keyCode: 'ы', capitalizedKeyCode: true },
                 { keyCode: 'в', capitalizedKeyCode: true },

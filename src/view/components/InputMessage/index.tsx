@@ -1,5 +1,5 @@
 // Core
-import React, { ChangeEvent, FC, useState, useEffect, useRef, KeyboardEventHandler } from 'react';
+import React, { ChangeEvent, FC, useEffect, useRef, KeyboardEventHandler } from 'react';
 
 // Components
 import { Button, Alert } from '@mui/material';
@@ -8,6 +8,7 @@ import { Button, Alert } from '@mui/material';
 import { InputWrapper, TextField } from './styles';
 
 // Hooks
+import { useInputMessage } from '../../../bus/client/input';
 import { useEdit } from '../../../bus/client/edit';
 import { useKeyboard } from '../../../bus/client/keyboard';
 
@@ -15,18 +16,17 @@ import { useKeyboard } from '../../../bus/client/keyboard';
 import { Done, ClearRounded } from '@mui/icons-material';
 
 type Proptypes = {
-    sendMessageAction: (message: string) => void
+    sendMessageAction: () => void
 }
 
 export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     const inputRef = useRef<null | HTMLInputElement>(null);
-    const [ message, setMessage ] = useState<string>('');
+    const { inputState, setInputMessage, resetInputMessage } = useInputMessage();
     const { editState, isEditing, resetEdit } = useEdit();
-    const { toggleActiveKey, isKeyboardVisible, toggleKeyboardLang, toggleCapitalize } = useKeyboard();
+    const { toggleActiveKey, isKeyboardVisible, toggleCapitalize } = useKeyboard();
 
     const submitForm = () => {
-        sendMessageAction(message);
-        setMessage('');
+        sendMessageAction();
     };
 
     const keyDownListenerCallback = ({ key }: KeyboardEvent) => {
@@ -34,26 +34,6 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
         inputRef.current?.focus();
         if (key.length > 1) {
             switch (key) {
-                case 'Backspace':
-                    setMessage((prevState) => {
-                        const selection = window.getSelection()?.toString();
-                        let newState = '';
-
-                        if (selection) {
-                            newState = prevState.replace(selection.toString(), '');
-                            inputRef.current!.selectionStart = prevState.indexOf(selection);
-                        } else {
-                            const caretPos = inputRef.current!.selectionStart;
-                            newState = prevState.split('').filter((char, index) => caretPos !== index + 1)
-                                .join('');
-                        }
-
-                        return newState;
-                    });
-                    break;
-                case 'Language':
-                    toggleKeyboardLang();
-                    break;
                 case 'Enter':
                     submitForm();
                     break;
@@ -62,8 +42,6 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
                     break;
                 default:
             }
-        } else {
-            setMessage((prevState) => prevState + key);
         }
     };
 
@@ -92,18 +70,18 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
             document.removeEventListener('keydown', keyDownListenerCallback);
             document.removeEventListener('keyup', keyUpListenerCallback);
         };
-    }, [ isKeyboardVisible, isEditing, message ]);
+    }, [ isKeyboardVisible, isEditing, inputState.text ]);
 
     useEffect(() => {
         if (isEditing && editState.text) {
-            setMessage(editState.text);
+            setInputMessage({ text: editState.text });
         } else {
-            setMessage('');
+            resetInputMessage();
         }
     }, [ isEditing, editState.id ]);
 
     const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => {
-        !isKeyboardVisible && setMessage(() => event.target.value);
+        setInputMessage({ text: event.target.value });
     };
 
     const onButtonClickHandle = () => {
@@ -111,7 +89,7 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     };
 
     const onKeyPressHandle: KeyboardEventHandler<HTMLInputElement> = (event) => {
-        if (message && event.key === 'Enter') {
+        if (inputState.text && event.key === 'Enter') {
             submitForm();
         }
     };
@@ -151,13 +129,13 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
             }
             <TextField
                 ref = { inputRef }
-                value = { message }
+                value = { inputState.text || '' }
                 onChange = { onChangeHandle }
                 onKeyPress = { onKeyPressHandle }
             />
             <Button
                 children = { <Done /> }
-                disabled = { !message }
+                disabled = { !inputState.text }
                 sx = {{
                     height: '100%',
                 }}

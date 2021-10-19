@@ -1,15 +1,18 @@
 // Core
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
+import { v4 } from 'uuid';
 
 // Tools
 import { useSelector } from '../../../tools/hooks';
 
-// Types
-import { IControlledError } from '../../../tools/utils';
-type ErrorsState = Array<IControlledError>
-type ISetControlledError = PayloadAction<IControlledError>
-type IUnsetControlledError = PayloadAction<{ errorId: string }>
+type Error = {
+    id: string,
+    message: string,
+}
+type ErrorsState = Array<Error>
+type SetError = PayloadAction<Omit<Error, 'id'>>
+type UnsetError = PayloadAction<{ id: string }>
 
 const initialState: ErrorsState = [];
 
@@ -18,9 +21,9 @@ export const errorsSlice = createSlice({
     name:     'errors',
     initialState,
     reducers: {
-        setControlledError:   (state, action: ISetControlledError) => [ ...state, action.payload ],
-        unsetControlledError: (state, action: IUnsetControlledError) => state.filter(
-            ({ errorId }) => errorId !== action.payload.errorId,
+        setControlledError:   (state, action: SetError) => [ ...state, { id: v4(), message: action.payload.message  }],
+        unsetControlledError: (state, action: UnsetError) => state.filter(
+            ({ id }) => id !== action.payload.id,
         ),
     },
 });
@@ -34,9 +37,7 @@ export const useErrors = () => {
 
     return {
         errors:                     useSelector(({ errors }) => errors),
-        setControlledErrorAction:   (error: IControlledError) => void dispatch(errorsActions.setControlledError(error)),
-        unsetControlledErrorAction: ({ errorId }: { errorId: string }) => void dispatch(
-            errorsActions.unsetControlledError({ errorId }),
-        ),
+        setControlledErrorAction:   (error: Omit<Error, 'id'>) => void dispatch(errorsActions.setControlledError({ message: error.message })),
+        unsetControlledErrorAction: ({ id }: Omit<Error, 'message'>) => dispatch(errorsActions.unsetControlledError({ id })),
     };
 };
