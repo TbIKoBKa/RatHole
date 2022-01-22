@@ -1,13 +1,15 @@
 // Core
-import React, { FC, useEffect, useCallback } from 'react';
+import React, { FC, useEffect, useCallback, useContext } from 'react';
 import { ThemeProvider } from 'styled-components';
+
+// Context
+import { TogglersContext } from '../bus/client/togglers';
 
 // Containers
 import { Routes } from './routes';
 
 // Hooks
 import { useLocalStorage } from '../tools/hooks';
-import { useTogglersRedux } from '../bus/client/togglers';
 
 // Assets
 import { GlobalStyles, defaultTheme } from '../assets';
@@ -16,13 +18,13 @@ import { GlobalStyles, defaultTheme } from '../assets';
 import { AppContainer } from './styles';
 
 export const App: FC = () => {
-    const { setTogglerAction } = useTogglersRedux();
+    const { setToggler } = useContext(TogglersContext);
     const [ isDefaultTheme ] = useLocalStorage('isDefaultTheme', true);
 
-    const setOnlineStatusHanlder = useCallback(() => void setTogglerAction({
+    const setOnlineStatusHanlder = useCallback(() => void setToggler({
         type:  'isOnline',
         value: navigator.onLine,
-    }), [ setTogglerAction ]);
+    }), [ setToggler ]);
 
     useEffect(() => {
         setOnlineStatusHanlder();

@@ -1,6 +1,3 @@
-// Core
-import { CaseReducer, PayloadAction } from '@reduxjs/toolkit';
-
 // Types
 export type Message = {
     _id: string,
@@ -12,7 +9,23 @@ export type Message = {
 export type MessagesState = Array<Message>
 
 // Contracts
-export type SetMessagesContract = CaseReducer<MessagesState, PayloadAction<MessagesState>>
-export type AddMessageContract = CaseReducer<MessagesState, PayloadAction<Message>>
-export type EditMessageContract = CaseReducer<MessagesState, PayloadAction<Message>>
-export type DeleteMessageContract = CaseReducer<MessagesState, PayloadAction<string>>
+export type SetMessagesContract = (payload: MessagesState) => void
+export type AddMessageContract = (payload: Message) => void
+export type EditMessageContract = (payload: Message) => void
+export type DeleteMessageContract = (messageId: string) => void
+
+export type FetchMessagesContract = () => Promise<any>
+export type DeleteMessageAsyncContract = () => Promise<any>
+export type SendMessageContract = () => Promise<any>
+
+// Context
+export type MessagesContextType = {
+    messagesState: MessagesState,
+    setMessages: SetMessagesContract,
+    addMessage: AddMessageContract,
+    editMessage: EditMessageContract,
+    deleteMessage: DeleteMessageContract,
+    fetchMessages: FetchMessagesContract,
+    deleteMessageAsync: DeleteMessageAsyncContract,
+    sendMessage: SendMessageContract,
+}

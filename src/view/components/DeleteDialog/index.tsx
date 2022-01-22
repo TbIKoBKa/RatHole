@@ -1,23 +1,25 @@
 // Core
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 
-// Hooks
-import { useDelete } from '../../../bus/client/delete';
-import { useMessages } from '../../../bus/messages';
+// Contexts
+import { TogglersContext } from '../../../bus/client/togglers';
+import { DeleteContext } from '../../../bus/client/delete';
+import { MessagesContext } from '../../../bus/messages';
 
 // Components
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
 export const DeleteDialog: FC = () => {
-    const { deleteMessageAction } = useMessages();
-    const { resetDelete, isDeleting  } = useDelete();
+    const { togglersState: { isDeletingMessage }} = useContext(TogglersContext);
+    const { deleteMessageAsync } = useContext(MessagesContext);
+    const { resetDeleteMessage } = useContext(DeleteContext);
 
     return (
         <Dialog
             aria-describedby = 'alert-dialog-description'
             aria-labelledby = 'alert-dialog-title'
-            open = { isDeleting }
-            onClose = { resetDelete }>
+            open = { isDeletingMessage }
+            onClose = { resetDeleteMessage }>
             <DialogTitle id = 'alert-dialog-title'>
                 Confirmation
             </DialogTitle>
@@ -27,10 +29,10 @@ export const DeleteDialog: FC = () => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick = { resetDelete }>Disagree</Button>
+                <Button onClick = { resetDeleteMessage }>Disagree</Button>
                 <Button
                     autoFocus
-                    onClick = { deleteMessageAction }>
+                    onClick = { deleteMessageAsync }>
                     Agree
                 </Button>
             </DialogActions>

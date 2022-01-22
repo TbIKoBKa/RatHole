@@ -1,6 +1,8 @@
 // Core
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useUser } from '../../../bus/user';
+import React, { useContext, ChangeEvent, useEffect, useState } from 'react';
+
+// Contexts
+import { UserContext } from '../../../bus/user';
 
 // Styles
 import { RegistrationWrapper, Label, TextField, Button } from './styles';
@@ -12,8 +14,8 @@ import { Username } from '../../../bus/user/types';
 import { generateId } from '../../../tools/helpers';
 
 export const Registation = () => {
+    const { registerUser } = useContext(UserContext);
     const [ username, setUsername ] = useState<Username>(null);
-    const { registerUser } = useUser();
 
     useEffect(() => {
         setUsername(`RAT:${generateId()}`);

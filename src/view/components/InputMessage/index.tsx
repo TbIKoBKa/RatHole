@@ -1,5 +1,5 @@
 // Core
-import React, { ChangeEvent, FC, useEffect, useRef, KeyboardEventHandler } from 'react';
+import React, { useContext, ChangeEvent, FC, useEffect, useRef, KeyboardEventHandler } from 'react';
 
 // Components
 import { Button, Alert } from '@mui/material';
@@ -7,10 +7,11 @@ import { Button, Alert } from '@mui/material';
 // Styles
 import { InputWrapper, TextField } from './styles';
 
-// Hooks
-import { useInputMessage } from '../../../bus/client/input';
-import { useEdit } from '../../../bus/client/edit';
-import { useKeyboard } from '../../../bus/client/keyboard';
+// Contexts
+import { TogglersContext } from '../../../bus/client/togglers';
+import { InputContext } from '../../../bus/client/input';
+import { EditContext } from '../../../bus/client/edit';
+import { KeyboardContext } from '../../../bus/client/keyboard';
 
 // Icons
 import { Done, ClearRounded } from '@mui/icons-material';
@@ -21,9 +22,10 @@ type Proptypes = {
 
 export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     const inputRef = useRef<null | HTMLInputElement>(null);
-    const { inputState, setInputMessage, resetInputMessage } = useInputMessage();
-    const { editState, isEditing, resetEdit } = useEdit();
-    const { toggleActiveKey, isKeyboardVisible, toggleCapitalize } = useKeyboard();
+    const { togglersState: { isEditingMessage, isKeyboardVisible }} = useContext(TogglersContext);
+    const { inputState, setInputMessage, resetInputMessage } = useContext(InputContext);
+    const { editState,  resetEditMessage } = useContext(EditContext);
+    const { toggleActiveKey, toggleCapitalize } = useContext(KeyboardContext);
 
     const submitForm = () => {
         sendMessageAction();
@@ -70,15 +72,15 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
             document.removeEventListener('keydown', keyDownListenerCallback);
             document.removeEventListener('keyup', keyUpListenerCallback);
         };
-    }, [ isKeyboardVisible, isEditing, inputState.text ]);
+    }, [ isKeyboardVisible, isEditingMessage, inputState.text ]);
 
     useEffect(() => {
-        if (isEditing && editState.text) {
+        if (isEditingMessage && editState.text) {
             setInputMessage({ text: editState.text });
         } else {
             resetInputMessage();
         }
-    }, [ isEditing, editState.id ]);
+    }, [ isEditingMessage, editState.id ]);
 
     const onChangeHandle = (event: ChangeEvent<HTMLInputElement>) => {
         setInputMessage({ text: event.target.value });
@@ -97,7 +99,7 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
     return (
         <InputWrapper>
             {
-                isEditing && (
+                isEditingMessage && (
                     <Alert
                         children = {
                             <>
@@ -114,7 +116,7 @@ export const InputMessage: FC<Proptypes> = ({ sendMessageAction }) => {
                                             background: '#ffffff88',
                                         },
                                     }}
-                                    onClick = { resetEdit }
+                                    onClick = { resetEditMessage }
                                 />
                             </>
                         }

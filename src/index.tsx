@@ -3,11 +3,12 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Router } from 'react-router-dom';
-import { Provider as ReduxProvider } from 'react-redux';
+
+// Bus
+import { RootProvider } from './bus';
 
 // Init
 import {
-    store as reduxStore,
     history as routerHistory,
     registerServiceWorker,
 } from './init';
@@ -22,11 +23,11 @@ initIconsLibrary();
 
 const Root = () => {
     return (
-        <ReduxProvider store = { reduxStore }>
+        <RootProvider>
             <Router history = { routerHistory }>
                 <App />
             </Router>
-        </ReduxProvider>
+        </RootProvider>
     );
 };
 

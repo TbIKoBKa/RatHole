@@ -1,9 +1,10 @@
 // Core
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 
-// Hooks
-import { useKeyboard } from '../../../bus/client/keyboard';
-import { useInputMessage } from '../../../bus/client/input';
+// Contexts
+import { TogglersContext } from '../../../bus/client/togglers';
+import { KeyboardContext } from '../../../bus/client/keyboard';
+import { InputContext } from '../../../bus/client/input';
 
 // Helpers
 import { getRequiredKeyCode } from '../../../tools/helpers';
@@ -12,8 +13,13 @@ import { getRequiredKeyCode } from '../../../tools/helpers';
 import { KeyboardGrid, KeyboardGridRow, Key } from './styles';
 
 export const Keyboard: FC = () => {
-    const { activeKeys, keyboardKeys, isCapitalize, toggleCapitalize, toggleKeyboardLang } = useKeyboard();
-    const { inputState, setInputMessage } = useInputMessage();
+    const { togglersState: { isCapitalize }} = useContext(TogglersContext);
+    const {
+        keyboardState: { keyboardKeys, activeKeyCodes },
+        toggleCapitalize,
+        toggleKeyboardLang,
+    } = useContext(KeyboardContext);
+    const { inputState, setInputMessage } = useContext(InputContext);
 
     return (
         <KeyboardGrid>
@@ -26,7 +32,7 @@ export const Keyboard: FC = () => {
                         <Key
                             key = { index }
                             sx = {{
-                                backgroundColor: `${activeKeys.includes(key.keyCode) || (key.keyCode === 'Shift' && isCapitalize) ? 'rgba(25, 118, 210, 0.04)' : '#57aaff'}`,
+                                backgroundColor: `${activeKeyCodes.includes(key.keyCode) || (key.keyCode === 'Shift' && isCapitalize) ? 'rgba(25, 118, 210, 0.04)' : '#57aaff'}`,
                             }}
                             onClick = {
                                 () => {

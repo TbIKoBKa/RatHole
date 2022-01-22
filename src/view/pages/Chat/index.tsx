@@ -1,5 +1,9 @@
 // Core
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
+
+// Contexts
+import { TogglersContext } from '../../../bus/client/togglers';
+import { MessagesContext } from '../../../bus/messages';
 
 // Containers
 import { ChatHeader, ChatBody } from '../../containers';
@@ -10,32 +14,26 @@ import { ErrorBoundary, InputMessage, Keyboard, DeleteDialog } from '../../compo
 // Elements
 import { Spinner } from '../../elements';
 
-// Hooks
-import { useMessages } from '../../../bus/messages';
-import { useDelete } from '../../../bus/client/delete';
-
 // Styles
 import {
     ChatContainer,
 } from './styles';
-import { useKeyboard } from '../../../bus/client/keyboard';
 
 const Chat: FC = () => {
-    const { messages, sendMessageAction } = useMessages();
-    const { isKeyboardVisible } = useKeyboard();
-    const { isDeleting } = useDelete();
+    const { messagesState, sendMessage } = useContext(MessagesContext);
+    const { togglersState: { isDeletingMessage, isKeyboardVisible }} = useContext(TogglersContext);
 
-    if (!messages.length) {
+    if (!messagesState.length) {
         return <Spinner />;
     }
 
     return (
         <ChatContainer>
             <ChatHeader />
-            <ChatBody messages = { messages } />
-            <InputMessage sendMessageAction = { sendMessageAction } />
+            <ChatBody messages = { messagesState } />
+            <InputMessage sendMessageAction = { sendMessage } />
             {isKeyboardVisible && <Keyboard /> }
-            {isDeleting && <DeleteDialog />}
+            {isDeletingMessage && <DeleteDialog />}
         </ChatContainer>
     );
 };

@@ -1,8 +1,9 @@
 // Core
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 
 // Hooks
-import { useUser } from '../../../bus/user';
+import { UserContext } from '../../../bus/user';
+import { KeyboardContext } from '../../../bus/client/keyboard';
 
 // Components
 import { Button, ButtonGroup } from '@mui/material';
@@ -15,17 +16,16 @@ import {
 
 // Icons
 import { Logout, KeyboardAltRounded } from '@mui/icons-material';
-import { useKeyboard } from '../../../bus/client/keyboard';
 
 export const ChatHeader: FC = () => {
-    const { user, resetUser } = useUser();
-    const { toggleKeyboard, resetKeyboard } = useKeyboard();
+    const { userState, resetUser } = useContext(UserContext);
+    const { resetKeyboard, toggleKeyboard } = useContext(KeyboardContext);
 
     const onClickButtonHandle = () => resetUser();
 
     return (
         <StyledHeader>
-            <HeaderTitle>Welcome, {user.username}</HeaderTitle>
+            <HeaderTitle>Welcome, {userState.username}</HeaderTitle>
             <ButtonGroup
                 aria-label = 'contained button group'
                 variant = 'outlined'>

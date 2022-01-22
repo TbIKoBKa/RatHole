@@ -1,10 +1,10 @@
 // Core
-import React, { FC, Suspense, useEffect } from 'react';
-import { useTogglersRedux } from '../../bus/client/togglers';
-import { useUser } from '../../bus/user';
+import React, { FC, Suspense, useEffect, useContext } from 'react';
 
-// Hooks
-import { useErrors } from '../../bus/client/errors';
+// Context
+import { TogglersContext } from '../../bus/client/togglers';
+import { UserContext } from '../../bus/user';
+import { ErrorsContext } from '../../bus/client/errors';
 
 // Routes
 import { Public } from './Public';
@@ -17,9 +17,9 @@ import { Alert, Stack } from '@mui/material';
 import { Spinner } from '../elements';
 
 export const Routes: FC = () => {
-    const { togglersRedux: { isLogged, isUserFetching, isUserRegistrating }} = useTogglersRedux();
-    const { refreshUser } = useUser();
-    const { errors, unsetControlledErrorAction } = useErrors();
+    const { togglersState: { isUserFetching, isUserRegistrating, isLogged }} = useContext(TogglersContext);
+    const { refreshUser } = useContext(UserContext);
+    const { errorsState, unsetError } = useContext(ErrorsContext);
 
     useEffect(() => {
         refreshUser();
@@ -31,13 +31,13 @@ export const Routes: FC = () => {
 
     return (
         <Suspense fallback = { <Spinner /> }>
-            { errors.length > 0 && (
+            {errorsState.length > 0 && (
                 <Stack
                     sx = {{
                         position: 'absolute',
                         zIndex:   1000,
                     }}>
-                    {errors.map((error) => (
+                    {errorsState.map((error) => (
                         <Alert
                             key = { error.id }
                             severity = 'error'
@@ -47,7 +47,7 @@ export const Routes: FC = () => {
                                 marginBottom:    '6px',
                                 color:           'white',
                             }}
-                            onClose = { () => { unsetControlledErrorAction({ id: error.id }); } }>
+                            onClose = { () => { unsetError({ id: error.id }); } }>
                             {error.message}
                         </Alert>
                     ))}

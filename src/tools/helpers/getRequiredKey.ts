@@ -1,5 +1,5 @@
 // Types
-import { Key } from '../../bus/client/keyboard';
+import { Key } from '../../bus/client/keyboard/context';
 
 export const getRequiredKeyCode = ({ keyCode, capitalizedKeyCode }: Key, isCapitalize: boolean) => {
     if (typeof capitalizedKeyCode === 'boolean') {
